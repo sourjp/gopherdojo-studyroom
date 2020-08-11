@@ -65,7 +65,7 @@ func (c *Converter) Decode(p string) (img image.Image, err error) {
 	}
 	defer func() {
 		if rerr := f.Close(); rerr != nil {
-			err = fmt.Errorf("Failed to close file: %v, the original error was %v", rerr, err)
+			err = fmt.Errorf("Failed to close file: %v, the original error: %v", rerr, err)
 		}
 	}()
 
@@ -95,7 +95,7 @@ func (c *Converter) Encode(p string, img image.Image) (err error) {
 	}
 	defer func() {
 		if rerr := f.Close(); rerr != nil {
-			err = fmt.Errorf("Failed to close file: %v, the original error was %v", rerr, err)
+			err = fmt.Errorf("Failed to close file: %v, the original error: %v", rerr, err)
 		}
 	}()
 
@@ -107,11 +107,9 @@ func (c *Converter) Encode(p string, img image.Image) (err error) {
 	case "gif":
 		err = gif.Encode(f, img, nil)
 	default:
-		defer os.Remove(fname)
 		return fmt.Errorf("An extention doesn't support to encode: ext=%s", c.DstExt)
 	}
 	if err != nil {
-		defer os.Remove(fname)
 		return fmt.Errorf("Failed to encode iamge file: file=%s, err=%v", p, err)
 	}
 
