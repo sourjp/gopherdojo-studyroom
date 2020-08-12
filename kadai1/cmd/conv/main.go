@@ -54,8 +54,8 @@ func run() error {
 			fmt.Fprintln(os.Stderr, err)
 			continue
 		}
-		err = c.Encode(path, img)
-		if err != nil {
+
+		if err = c.Encode(path, img); err != nil {
 			fmt.Fprintln(os.Stderr, err)
 			continue
 		}
