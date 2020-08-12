@@ -32,15 +32,15 @@ func run() error {
 	flag.Parse()
 	args := flag.Args()
 	if len(args) != 1 {
-		return errors.New("Please specifiy a directory, conv find image files recursively")
+		return errors.New("please specifiy a directory, conv find image files recursively")
 	}
 	if _, err := os.Stat(args[0]); os.IsNotExist(err) {
-		return fmt.Errorf("Failed to found directory: dir=%s", args[0])
+		return fmt.Errorf("failed to found directory: dir=%s", args[0])
 	}
 
 	c := conv.New(args[0], srcExt, dstExt)
 	if ok := c.IsValidatedExt(); !ok {
-		return fmt.Errorf("Failed to read specified extention: srcExt=%s, dstExt=%s", srcExt, dstExt)
+		return fmt.Errorf("failed to read specified extention: srcExt=%s, dstExt=%s", srcExt, dstExt)
 	}
 
 	paths, err := c.GetImagePaths()

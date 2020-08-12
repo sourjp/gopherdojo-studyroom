@@ -52,7 +52,7 @@ func (c *Converter) GetImagePaths() ([]string, error) {
 	}
 
 	if len(paths) == 0 {
-		return nil, fmt.Errorf("Failed to find image files:  dir=%s, ext=.%s", c.SrcExt, c.BaseDir)
+		return nil, fmt.Errorf("failed to find image files:  dir=%s, ext=.%s", c.SrcExt, c.BaseDir)
 	}
 	return paths, nil
 }
@@ -61,11 +61,11 @@ func (c *Converter) GetImagePaths() ([]string, error) {
 func (c *Converter) Decode(p string) (img image.Image, err error) {
 	f, err := os.Open(p)
 	if err != nil {
-		return nil, fmt.Errorf("Failed to open image file: file=%s, err=%v", p, err)
+		return nil, fmt.Errorf("failed to open image file: file=%s, err=%v", p, err)
 	}
 	defer func() {
 		if rerr := f.Close(); rerr != nil {
-			err = fmt.Errorf("Failed to close file: %v, the original error: %v", rerr, err)
+			err = fmt.Errorf("failed to close file: %v, the original error: %v", rerr, err)
 		}
 	}()
 
@@ -77,10 +77,10 @@ func (c *Converter) Decode(p string) (img image.Image, err error) {
 	case "gif":
 		img, err = gif.Decode(f)
 	default:
-		return nil, fmt.Errorf("An extention doesn't support to decode: ext=%s", c.SrcExt)
+		return nil, fmt.Errorf("an extention doesn't support to decode: ext=%s", c.SrcExt)
 	}
 	if err != nil {
-		return nil, fmt.Errorf("Failed to decode iamge file: file=%s, err=%v", p, err)
+		return nil, fmt.Errorf("failed to decode iamge file: file=%s, err=%v", p, err)
 	}
 
 	return img, nil
@@ -91,11 +91,11 @@ func (c *Converter) Encode(p string, img image.Image) (err error) {
 	fname := p[:len(p)-len(filepath.Ext(p))] + "." + c.DstExt
 	f, err := os.Create(fname)
 	if err != nil {
-		return fmt.Errorf("Failed to create image file: file=%s, err=%v", p, err)
+		return fmt.Errorf("failed to create image file: file=%s, err=%v", p, err)
 	}
 	defer func() {
 		if rerr := f.Close(); rerr != nil {
-			err = fmt.Errorf("Failed to close file: %v, the original error: %v", rerr, err)
+			err = fmt.Errorf("failed to close file: %v, the original error: %v", rerr, err)
 		}
 	}()
 
@@ -107,10 +107,10 @@ func (c *Converter) Encode(p string, img image.Image) (err error) {
 	case "gif":
 		err = gif.Encode(f, img, nil)
 	default:
-		return fmt.Errorf("An extention doesn't support to encode: ext=%s", c.DstExt)
+		return fmt.Errorf("an extention doesn't support to encode: ext=%s", c.DstExt)
 	}
 	if err != nil {
-		return fmt.Errorf("Failed to encode iamge file: file=%s, err=%v", p, err)
+		return fmt.Errorf("failed to encode iamge file: file=%s, err=%v", p, err)
 	}
 
 	return nil
