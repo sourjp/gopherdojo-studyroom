@@ -16,8 +16,8 @@ func TestIsValidatedExt(t *testing.T) {
 	}{
 		{name: "Support jpg, jpeg", srcExt: "jpg", dstExt: "jpeg", expect: true},
 		{name: "Support png, gif", srcExt: "png", dstExt: "gif", expect: true},
-		{name: "Unsupport a part", srcExt: "jpg", dstExt: "none", expect: false},
-		{name: "Unsupport both parts", srcExt: "none", dstExt: "none", expect: false},
+		{name: "Unsupport one ext", srcExt: "jpg", dstExt: "none", expect: false},
+		{name: "Unsupport both ext", srcExt: "none", dstExt: "none", expect: false},
 	}
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
@@ -38,8 +38,8 @@ func TestGetImagePaths(t *testing.T) {
 		expect  []string
 	}{
 		{name: "Support jpg, jpeg", baseDir: "testdata", srcExt: "jpg", dstExt: "jpeg", expect: []string{"testdata/t1.jpg", "testdata/testdata2/t2.jpg"}},
-		{name: "Not found images", baseDir: "testdata", srcExt: "none", dstExt: "none", expect: []string{}},
-		{name: "Not found dir", baseDir: "none", srcExt: "jpg", dstExt: "jpeg", expect: []string{}},
+		{name: "Failed to find images", baseDir: "testdata", srcExt: "none", dstExt: "none", expect: []string{}},
+		{name: "Failed to find dir", baseDir: "none", srcExt: "jpg", dstExt: "jpeg", expect: []string{}},
 	}
 
 	for _, test := range tests {
@@ -64,10 +64,13 @@ func TestEncodeAndDecode(t *testing.T) {
 		dstExt  string
 		paths   []string
 		expect  []string
+		fail    bool // If true, A test case expect to get err.
 	}{
-		{name: "Convert jpg to png", baseDir: "testdata", srcExt: "jpg", dstExt: "png", paths: []string{"testdata/t1.jpg", "testdata/testdata2/t2.jpg"}, expect: []string{"testdata/t1.png", "testdata/testdata2/t2.png"}},
-		{name: "Convert png to gif", baseDir: "testdata", srcExt: "png", dstExt: "gif", paths: []string{"testdata/t1.png", "testdata/testdata2/t2.png"}, expect: []string{"testdata/t1.gif", "testdata/testdata2/t2.gif"}},
-		{name: "Convert gif to jpeg", baseDir: "testdata", srcExt: "gif", dstExt: "jpeg", paths: []string{"testdata/t1.gif", "testdata/testdata2/t2.gif"}, expect: []string{"testdata/t1.jpeg", "testdata/testdata2/t2.jpeg"}},
+		{name: "Convert jpg to png", baseDir: "testdata", srcExt: "jpg", dstExt: "png", paths: []string{"testdata/t1.jpg", "testdata/testdata2/t2.jpg"}, expect: []string{"testdata/t1.png", "testdata/testdata2/t2.png"}, fail: false},
+		{name: "Convert png to gif", baseDir: "testdata", srcExt: "png", dstExt: "gif", paths: []string{"testdata/t1.png", "testdata/testdata2/t2.png"}, expect: []string{"testdata/t1.gif", "testdata/testdata2/t2.gif"}, fail: false},
+		{name: "Convert gif to jpeg", baseDir: "testdata", srcExt: "gif", dstExt: "jpeg", paths: []string{"testdata/t1.gif", "testdata/testdata2/t2.gif"}, expect: []string{"testdata/t1.jpeg", "testdata/testdata2/t2.jpeg"}, fail: false},
+		{name: "Failed to decode file", baseDir: "testdata", srcExt: "bmp", dstExt: "png", paths: []string{"testdata/t1.jpg"}, expect: []string{}, fail: true},
+		{name: "Failed to encode file", baseDir: "testdata", srcExt: "jpg", dstExt: "bmp", paths: []string{"testdata/t1.jpg"}, expect: []string{}, fail: true},
 	}
 
 	// madeFiles save file name which are created to delete after testing.
@@ -79,11 +82,16 @@ func TestEncodeAndDecode(t *testing.T) {
 			for i, path := range test.paths {
 				img, err := c.Decode(path)
 				if err != nil {
+					if test.fail {
+						continue // If it's expect to fail, Good to go next case.
+					}
 					t.Errorf("Decode() got err: %s", err)
-					continue
 				}
 				err = c.Encode(path, img)
 				if err != nil {
+					if test.fail {
+						continue // If it's expect to fail, Good to go next case.
+					}
 					t.Errorf("Encode() got err: %s", err)
 				}
 
