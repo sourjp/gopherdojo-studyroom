@@ -69,8 +69,7 @@ func TestEncodeAndDecode(t *testing.T) {
 		{name: "Convert jpg to png", baseDir: "testdata", srcExt: "jpg", dstExt: "png", paths: []string{"testdata/t1.jpg", "testdata/testdata2/t2.jpg"}, expect: []string{"testdata/t1.png", "testdata/testdata2/t2.png"}, fail: false},
 		{name: "Convert png to gif", baseDir: "testdata", srcExt: "png", dstExt: "gif", paths: []string{"testdata/t1.png", "testdata/testdata2/t2.png"}, expect: []string{"testdata/t1.gif", "testdata/testdata2/t2.gif"}, fail: false},
 		{name: "Convert gif to jpeg", baseDir: "testdata", srcExt: "gif", dstExt: "jpeg", paths: []string{"testdata/t1.gif", "testdata/testdata2/t2.gif"}, expect: []string{"testdata/t1.jpeg", "testdata/testdata2/t2.jpeg"}, fail: false},
-		{name: "Failed to decode file", baseDir: "testdata", srcExt: "bmp", dstExt: "png", paths: []string{"testdata/t1.jpg"}, expect: []string{}, fail: true},
-		{name: "Failed to encode file", baseDir: "testdata", srcExt: "jpg", dstExt: "bmp", paths: []string{"testdata/t1.jpg"}, expect: []string{}, fail: true},
+		{name: "Failed to read file", baseDir: "testdata", srcExt: "png", dstExt: "jpg", paths: []string{"testdata/noimage.png"}, expect: []string{}, fail: true},
 	}
 
 	// madeFiles save file name which are created to delete after testing.
