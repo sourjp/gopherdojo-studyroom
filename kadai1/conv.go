@@ -59,7 +59,7 @@ func (c *Converter) GetImagePaths() ([]string, error) {
 
 // Decode returns ImageData which compose file path and decoded image data.
 func (c *Converter) Decode(p string) (img image.Image, err error) {
-	f, err := os.Open(p)
+	f, err := os.Open(filepath.Clean(p))
 	if err != nil {
 		return nil, fmt.Errorf("failed to open image file: file=%s, err=%v", p, err)
 	}
