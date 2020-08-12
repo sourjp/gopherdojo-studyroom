@@ -25,7 +25,7 @@ func main() {
 		fmt.Fprintf(os.Stderr, "error: %s\n", err)
 		os.Exit(1)
 	}
-	fmt.Println("Image convert was suceeded!")
+	fmt.Println("Image convert has finished!")
 }
 
 func run() error {

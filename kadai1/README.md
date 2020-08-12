@@ -17,7 +17,7 @@ testdata/t1.jpg: JPEG image data, baseline, precision 8, 1431x901, frames 3
 
 $ make build
 $ ./converter testdata
-Image convert was suceeded!
+Image convert has finished!
 
 $ tree testdata
 testdata
