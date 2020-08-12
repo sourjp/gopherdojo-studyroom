@@ -8,6 +8,7 @@ import (
 	"image/png"
 	"os"
 	"path/filepath"
+	"strings"
 )
 
 // Converter defines structure of converting informations.
@@ -88,7 +89,7 @@ func (c *Converter) Decode(p string) (img image.Image, err error) {
 
 // Encode encodes image file.
 func (c *Converter) Encode(p string, img image.Image) (err error) {
-	fname := p[:len(p)-len(filepath.Ext(p))] + "." + c.DstExt
+	fname := strings.TrimSuffix(p, filepath.Ext(p)) + "." + c.DstExt
 	f, err := os.Create(fname)
 	if err != nil {
 		return fmt.Errorf("failed to create image file: file=%s, err=%v", p, err)
