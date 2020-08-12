@@ -11,6 +11,14 @@ import (
 	"strings"
 )
 
+// Define supported extentions
+const (
+	JPG  string = "jpg"
+	JPEG string = "jpeg"
+	PNG  string = "png"
+	GIF  string = "gif"
+)
+
 // Converter defines structure of converting informations.
 type Converter struct {
 	BaseDir string
@@ -25,13 +33,13 @@ func New(d, se, de string) *Converter {
 
 // IsValidatedExt validate extensions.
 func (c *Converter) IsValidatedExt() bool {
-	var supportExt []string = []string{"jpg", "jpeg", "png", "gif"}
+	var supportExt []string = []string{JPG, JPEG, PNG, GIF}
 	var src, dst bool
-	for _, v := range supportExt {
-		if c.SrcExt == v {
+	for _, e := range supportExt {
+		if c.SrcExt == e {
 			src = true
 		}
-		if c.DstExt == v {
+		if c.DstExt == e {
 			dst = true
 		}
 	}
@@ -71,11 +79,11 @@ func (c *Converter) Decode(p string) (img image.Image, err error) {
 	}()
 
 	switch c.SrcExt {
-	case "jpg", "jpeg":
+	case JPG, JPEG:
 		img, err = jpeg.Decode(f)
-	case "png":
+	case PNG:
 		img, err = png.Decode(f)
-	case "gif":
+	case GIF:
 		img, err = gif.Decode(f)
 	default:
 		return nil, fmt.Errorf("an extension doesn't support to decode: ext=%s", c.SrcExt)
@@ -101,11 +109,11 @@ func (c *Converter) Encode(p string, img image.Image) (err error) {
 	}()
 
 	switch c.DstExt {
-	case "jpg", "jpeg":
+	case JPG, JPEG:
 		err = jpeg.Encode(f, img, nil)
-	case "png":
+	case PNG:
 		err = png.Encode(f, img)
-	case "gif":
+	case GIF:
 		err = gif.Encode(f, img, nil)
 	default:
 		return fmt.Errorf("an extension doesn't support to encode: ext=%s", c.DstExt)
