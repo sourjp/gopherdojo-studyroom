@@ -40,7 +40,7 @@ func run() error {
 
 	c := conv.New(args[0], srcExt, dstExt)
 	if ok := c.IsValidatedExt(); !ok {
-		return fmt.Errorf("failed to read specified extention: srcExt=%s, dstExt=%s", srcExt, dstExt)
+		return fmt.Errorf("failed to read specified extension: srcExt=%s, dstExt=%s", srcExt, dstExt)
 	}
 
 	paths, err := c.GetImagePaths()

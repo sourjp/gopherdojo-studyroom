@@ -23,7 +23,7 @@ func New(d, se, de string) *Converter {
 	return &Converter{BaseDir: d, SrcExt: se, DstExt: de}
 }
 
-// IsValidatedExt validate extentions.
+// IsValidatedExt validate extensions.
 func (c *Converter) IsValidatedExt() bool {
 	var supportExt []string = []string{"jpg", "jpeg", "png", "gif"}
 	var src, dst bool
@@ -38,7 +38,7 @@ func (c *Converter) IsValidatedExt() bool {
 	return src && dst
 }
 
-// GetImagePaths search specified extentionis image files recusively and returns them.
+// GetImagePaths search specified extensionis image files recusively and returns them.
 func (c *Converter) GetImagePaths() ([]string, error) {
 	var paths []string
 	err := filepath.Walk(c.BaseDir, func(path string, info os.FileInfo, err error) error {
@@ -78,7 +78,7 @@ func (c *Converter) Decode(p string) (img image.Image, err error) {
 	case "gif":
 		img, err = gif.Decode(f)
 	default:
-		return nil, fmt.Errorf("an extention doesn't support to decode: ext=%s", c.SrcExt)
+		return nil, fmt.Errorf("an extension doesn't support to decode: ext=%s", c.SrcExt)
 	}
 	if err != nil {
 		return nil, fmt.Errorf("failed to decode iamge file: file=%s, err=%v", p, err)
@@ -108,7 +108,7 @@ func (c *Converter) Encode(p string, img image.Image) (err error) {
 	case "gif":
 		err = gif.Encode(f, img, nil)
 	default:
-		return fmt.Errorf("an extention doesn't support to encode: ext=%s", c.DstExt)
+		return fmt.Errorf("an extension doesn't support to encode: ext=%s", c.DstExt)
 	}
 	if err != nil {
 		return fmt.Errorf("failed to encode iamge file: file=%s, err=%v", p, err)
