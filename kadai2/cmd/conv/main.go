@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"os"
 
-	conv "github.com/sourjp/gopherdojo-studyroom/kadai1"
+	conv "github.com/sourjp/gopherdojo-studyroom/kadai2"
 )
 
 var (
@@ -21,14 +21,15 @@ func init() {
 }
 
 func main() {
-	if err := run(); err != nil {
+	if err := Run(); err != nil {
 		fmt.Fprintf(os.Stderr, "error: %s\n", err)
 		os.Exit(1)
 	}
 	fmt.Println("Image convert has finished!")
 }
 
-func run() error {
+// Run handle the flags and return the result of Convert.
+func Run() error {
 	flag.Parse()
 	args := flag.Args()
 	if len(args) != 1 {
@@ -37,8 +38,12 @@ func run() error {
 	if _, err := os.Stat(args[0]); os.IsNotExist(err) {
 		return fmt.Errorf("failed to found directory: dir=%s", args[0])
 	}
+	return Converter(args[0], srcExt, dstExt)
+}
 
-	c := conv.New(args[0], srcExt, dstExt)
+// Converter handle the image convertng.
+func Converter(d, se, de string) error {
+	c := conv.New(d, se, de)
 	if ok := c.IsValidatedExt(); !ok {
 		return fmt.Errorf("failed to read specified extension: srcExt=%s, dstExt=%s", srcExt, dstExt)
 	}
@@ -51,13 +56,11 @@ func run() error {
 	for _, path := range paths {
 		img, err := c.Decode(path)
 		if err != nil {
-			fmt.Fprintln(os.Stderr, err)
-			continue
+			return err
 		}
 
 		if err = c.Encode(path, img); err != nil {
-			fmt.Fprintln(os.Stderr, err)
-			continue
+			return err
 		}
 	}
 	return nil
