@@ -11,7 +11,7 @@ import (
 	"strings"
 )
 
-// Define supported extentions
+// Define supported extensions
 const (
 	JPG  string = "jpg"
 	JPEG string = "jpeg"
