@@ -60,9 +60,6 @@ func (c *Converter) GetImagePaths() ([]string, error) {
 		return nil, err
 	}
 
-	if len(paths) == 0 {
-		return nil, fmt.Errorf("failed to find image files:  dir=%s, ext=.%s", c.SrcExt, c.BaseDir)
-	}
 	return paths, nil
 }
 

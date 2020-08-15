@@ -52,6 +52,9 @@ func Converter(d, se, de string) error {
 	if err != nil {
 		return err
 	}
+	if len(paths) == 0 {
+		return fmt.Errorf("failed to find image files:  dir=%s, ext=.%s", srcExt, baseDir)
+	}
 
 	for _, path := range paths {
 		img, err := c.Decode(path)
