@@ -109,7 +109,7 @@ func testDecodeAndEncode(t *testing.T, c *conv.Converter, path, expect string) e
 	if err != nil {
 		t.Fatalf("Decode() got err %s, expect %s", err, expect)
 	}
-	if err = c.Encode(path, img); err != nil {
+	if err := c.Encode(path, img); err != nil {
 		t.Fatalf("Encode() got err %s, expect %s", err, expect)
 	}
 	if _, err := os.Stat(expect); os.IsNotExist(err) {
