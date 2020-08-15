@@ -47,7 +47,7 @@ func init() {
 func Run() int {
 	fmt.Println(`
 	Thank you for playing TYPING Games!
-	Let's you type word as you can see on display withing 15 seocnds!
+	Let's you type word as you can see on display during 15 seconds!
 
 	Start Game in 3 seconds...
 	`)
