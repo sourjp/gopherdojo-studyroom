@@ -7,44 +7,27 @@ import (
 	"io"
 	"math/rand"
 	"os"
+	"path/filepath"
 	"time"
 )
 
 const (
-	exitOK = iota
+	quizFile = "quiz.csv"
+	exitOK   = iota
 	exitError
 )
 
-var (
-	quiz      []string
-	correct   int
-	wordsFile = "words.csv"
-)
-
-// init initialize game settings, I use panic() because wordsFile is needed to start.
 func init() {
-	f, err := os.Open(wordsFile)
-	if err != nil {
-		panic(err)
-	}
-	defer func() {
-		if err := f.Close(); err != nil {
-			panic(err)
-		}
-	}()
-
-	r := csv.NewReader(f)
-	words, err := r.ReadAll()
-	if err != nil {
-		panic(err)
-	}
-	for _, word := range words {
-		quiz = append(quiz, word[0])
-	}
+	rand.Seed(time.Now().UTC().UnixNano())
 }
 
 // Run handles a typing game.
-func Run() int {
+func Run() (int, error) {
+	quiz, err := Setup(quizFile)
+	if err != nil {
+		return exitError, err
+	}
+
 	fmt.Println(`
 	Thank you for playing TYPING Games!
 	Let's you type word as you can see on display during 15 seconds!
@@ -56,34 +39,62 @@ func Run() int {
 		time.Sleep(1 * time.Second)
 	}
 
-	done := time.After(15 * time.Second)
+	ans := Start(5, quiz)
 
-LOOP:
+	fmt.Printf("You got %d points!\n", ans)
+	return exitOK, nil
+}
+
+// Setup reads wrods file.
+func Setup(p string) ([]string, error) {
+	f, err := os.Open(filepath.Clean(p))
+	if err != nil {
+		return nil, fmt.Errorf("Failed to open file: err=%v", err)
+	}
+	defer func() {
+		if rerr := f.Close(); rerr != nil {
+			err = fmt.Errorf("Failed to close file: err=%v, rerr=%v", err, rerr)
+		}
+	}()
+
+	var quiz []string
+	r := csv.NewReader(f)
+	words, err := r.ReadAll()
+	if err != nil {
+		return nil, fmt.Errorf("Failed to read file: err=%v", err)
+	}
+	for _, word := range words {
+		quiz = append(quiz, word[0])
+	}
+	return quiz, nil
+}
+
+// Start control typing game.
+func Start(t time.Duration, quiz []string) int {
+	var correct int
+	done := time.After(t * time.Second)
+
 	for {
-		rand.Seed(time.Now().UTC().UnixNano())
 		q := quiz[rand.Intn(len(quiz)-1)]
 		fmt.Printf("> %v\n", q)
 
 		select {
 		case <-done:
-			fmt.Println("TimeUp!!!")
-			break LOOP
-		case ans := <-Reciever(os.Stdin):
+			fmt.Printf("\nTimeUp!!!\n")
+			return correct
+		case ans := <-Scanner(os.Stdin):
 			if q == ans {
 				fmt.Println("Correct!")
 				correct++
 			} else {
 				fmt.Println("Bad...")
 			}
-
 		}
 	}
-	fmt.Printf("You got %d points!\n", correct)
-	return exitOK
 }
 
-// Reciever use goroutin to accept stdin to work time.After() asynchronously.
-func Reciever(r io.Reader) <-chan string {
+// Scanner use goroutin to accept stdin to work time.After() asynchronously.
+func Scanner(r io.Reader) <-chan string {
 	ch := make(chan string)
 	go func() {
 		s := bufio.NewScanner(r)
